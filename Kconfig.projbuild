@@ -8,7 +8,7 @@ menu "LDM Sensors"
             Enable DHT Sensor.
 
     menu "DHT Sensor Configuration"
-    depends on DHT_SENSOR_ENABLED
+        depends on DHT_SENSOR_ENABLED
 
         config DHT_GPIO
             int "DHT GPIO Pin"
@@ -39,7 +39,8 @@ menu "LDM Sensors"
             Enable BME680 Sensor.
 
     menu "BME680 Configuration"
-    depends on BME680_SENSOR_ENABLED
+        depends on BME680_SENSOR_ENABLED
+
         config I2C_SCL
             int "I2C SCL GPIO Pin"
             default 19
@@ -60,5 +61,141 @@ menu "LDM Sensors"
 
     endmenu
 # End BME680 Configuration
+
+# Camera Configuration
+    config CAMERA_SENSOR_ENABLED
+        bool "Enable Camera"
+        default False
+        help
+            Enable Camera Sensor.
+
+    menu "Camera Pins"
+        depends on CAMERA_SENSOR_ENABLED
+        choice CAMERA_MODEL
+            bool "Select Camera Pinout"
+            default CAMERA_MODEL_HUZZAH32
+            help
+                Select Camera Pinout.
+
+            config CAMERA_MODEL_HUZZAH32
+                bool "HUZZAH32 With OV2640 Module"
+            config CAMERA_MODEL_ESP_EYE
+                bool "ESP_EYE DevKit"
+            config CAMERA_MODEL_WROVER_KIT
+                bool "WROVER-KIT With OV2640 Module"
+            config CAMERA_MODEL_ESP32_CAM_BOARD
+                bool "ESP32 Camera Development Board"
+            config CAMERA_MODEL_M5STACK_PSRAM
+                bool "M5Stack Camera With PSRAM"
+            config CAMERA_MODEL_M5STACK_WIDE
+                bool "M5Stack Camera F (Wide)"
+            config CAMERA_MODEL_AI_THINKER
+                bool "ESP32-CAM by AI-Thinker"
+            config CAMERA_MODEL_CUSTOM
+                bool "Custom Camera Pinout"
+        endchoice
+
+        menu "Custom Camera Pins"
+            depends on CAMERA_MODEL_CUSTOM
+
+            config CAMERA_PIN_PWDN
+                int "PWDN GPIO Pin"
+                default -1
+                help
+                    Camera PWDN Pin.
+
+            config CAMERA_PIN_RESET
+                int "RESET GPIO Pin"
+                default -1
+                help
+                    Camera RESET Pin.
+
+            config CAMERA_PIN_XCLK
+                int "XCLK GPIO Pin"
+                default 21
+                help
+                    Camera XCLK Pin.
+
+            config CAMERA_PIN_SIOD
+                int "SIOD GPIO Pin"
+                default 26
+                help
+                    Camera SIOD Pin.
+
+            config CAMERA_PIN_SIOC
+                int "SIOC GPIO Pin"
+                default 27
+                help
+                    Camera SIOC Pin.
+
+            config CAMERA_PIN_D7
+                int "D7 GPIO Pin"
+                default 33
+                help
+                    Camera D7 Pin.
+
+            config CAMERA_PIN_D6
+                int "D6 GPIO Pin"
+                default 34
+                help
+                    Camera D6 Pin.
+
+            config CAMERA_PIN_D5
+                int "D5 GPIO Pin"
+                default 39
+                help
+                    Camera D5 Pin.
+
+            config CAMERA_PIN_D4
+                int "D4 GPIO Pin"
+                default 36
+                help
+                    Camera D4 Pin.
+
+            config CAMERA_PIN_D3
+                int "D3 GPIO Pin"
+                default 19
+                help
+                    Camera D3 Pin.
+
+            config CAMERA_PIN_D2
+                int "D2 GPIO Pin"
+                default 18
+                help
+                    Camera D2 Pin.
+
+            config CAMERA_PIN_D1
+                int "D1 GPIO Pin"
+                default 5
+                help
+                    Camera D1 Pin.
+
+            config CAMERA_PIN_D0
+                int "D0 GPIO Pin"
+                default 4
+                help
+                    Camera D0 Pin.
+
+            config CAMERA_PIN_VSYNC
+                int "VSYNC GPIO Pin"
+                default 25
+                help
+                    Camera VSYNC Pin.
+
+            config CAMERA_PIN_HREF
+                int "HREF GPIO Pin"
+                default 23
+                help
+                    Camera HREF Pin.
+
+            config CAMERA_PIN_PCLK
+                int "PCLK GPIO Pin"
+                default 22
+                help
+                    Camera PCLK Pin.
+        endmenu
+
+    endmenu
+# End Camera Configuration
 
 endmenu
