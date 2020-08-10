@@ -53,7 +53,7 @@ LDM::Camera::Camera(pixformat_t resolution, pixformat_t pixel_format) {
 #endif
 }
 
-esp_err_t init(void) {
+esp_err_t LDM::Camera::init(void) {
     //power up the camera if PWDN pin is defined
     if(CAM_PIN_PWDN != -1) {
         pinMode(CAM_PIN_PWDN, OUTPUT);
@@ -70,7 +70,7 @@ esp_err_t init(void) {
     return err;
 }
 
-esp_err_t readSensor(void) {
+esp_err_t LDM::Camera::readSensor(void) {
     this->fb = NULL;
 
     //acquire a frame
@@ -99,7 +99,7 @@ esp_err_t readSensor(void) {
     return ESP_OK;
 }
 
-esp_err_t deinit(void) {
+esp_err_t LDM::Camera::deinit(void) {
     esp_err_t err = esp_camera_deinit();
 
     if(err != ESP_OK) {
@@ -111,22 +111,10 @@ esp_err_t deinit(void) {
 
     return err;
 }
-/*
-    Camera(pixformat_t resolution=PIXFORMAT_JPEG);
-    // BME680();
-    // float getHumidity(void);
-    // float getTemperature(void);
-    // float getPressure(void);
-    // float getGas(void);
-    // void setHumidity(float humidity);
-    // void setTemperature(float temperature);
-    // void setPressure(float pressure);
-    // void setGas(float gas);
 
-    esp_err_t init(void);
-    esp_err_t deinit(void);
-    esp_err_t readSensor(void);
-    cJSON *buildJson(void);
-*/
+cJSON* LDM::Camera::buildJson(void) {
+    // TODO
+    return NULL;
+}
 
 #endif // CONFIG_CAMERA_SENSOR_ENABLED

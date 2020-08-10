@@ -1,5 +1,3 @@
-// #ifdef BME680_SENSOR_ENABLED
-
 #include <esp_log.h>
 #include <cJSON.h>
 #include <cstring>
@@ -121,5 +119,3 @@ void LDM::BME680::setPressure(float pressure) {
 void LDM::BME680::setGas(float gas) {
     this->gas = gas;
 };
-
-// #endif
