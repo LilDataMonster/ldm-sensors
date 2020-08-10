@@ -32,9 +32,9 @@ public:
     void setHumidity(float humidity);
     void setTemperature(float temperature);
 
-    bool init(void);
-    bool deinit(void);
-    bool readSensor(void);
+    esp_err_t init(void);
+    esp_err_t deinit(void);
+    esp_err_t readSensor(void);
     cJSON *buildJson(void);
 
 private:

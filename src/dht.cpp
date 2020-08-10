@@ -15,31 +15,31 @@ LDM::DHT::DHT() : temperature(0), humidity(0) {
 
 };
 
-bool LDM::DHT::init(void) {
+esp_err_t LDM::DHT::init(void) {
     // DHT sensors that come mounted on a PCB generally have
     // pull-up resistors on the data pin.  It is recommended
     // to provide an external pull-up resistor otherwise...
     gpio_set_pull_mode(dht_gpio, GPIO_PULLUP_ONLY);
 
     DHT_INFO("DHT Initialized for GPIO %d", (int)dht_gpio);
-    return true;
+    return ESP_OK;
 };
 
-bool LDM::DHT::deinit(void) {
-    return true;
+esp_err_t LDM::DHT::deinit(void) {
+    return ESP_OK;
 };
 
-bool LDM::DHT::readSensor(void) {
+esp_err_t LDM::DHT::readSensor(void) {
     int16_t temperature, humidity;
     if(dht_read_data(this->sensor_type, this->dht_gpio, &humidity, &temperature) == ESP_OK) {
         this->setHumidity(humidity / 10.f);
         this->setTemperature(temperature / 10.f);
         DHT_INFO("Humidity: %.2f, Temp: %.2fC", this->getHumidity(), this->getTemperature());
-        return true;
+        return ESP_OK;
     }
     else {
         DHT_INFO("Could not read data from sensor");
-        return false;
+        return ESP_FAIL;
     }
 };
 

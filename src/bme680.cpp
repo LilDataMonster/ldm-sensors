@@ -18,7 +18,7 @@ LDM::BME680::BME680() : temperature(0), humidity(0), pressure(0), gas(0) {
     ESP_ERROR_CHECK(i2cdev_init());
 };
 
-bool LDM::BME680::init(void) {
+esp_err_t LDM::BME680::init(void) {
     memset(&this->sensor, 0, sizeof(bme680_t));
 
     ESP_ERROR_CHECK(bme680_init_desc(&this->sensor, ADDR, i2c_port_num, sda_gpio, scl_gpio));
@@ -46,14 +46,14 @@ bool LDM::BME680::init(void) {
 
     BME680_INFO("BME680 Initialized for I2C GPIO %d, SDA GPIO %d, SCL GPIO %d", (int)i2c_port_num, (int)sda_gpio, (int)scl_gpio);
 
-    return true;
+    return ESP_OK;
 };
 
-bool LDM::BME680::deinit(void) {
-    return true;
+esp_err_t LDM::BME680::deinit(void) {
+    return ESP_OK;
 };
 
-bool LDM::BME680::readSensor(void) {
+esp_err_t LDM::BME680::readSensor(void) {
     // trigger the sensor to start one TPHG measurement cycle
     if(bme680_force_measurement(&sensor) == ESP_OK) {
         bme680_values_float_t values;
@@ -71,14 +71,14 @@ bool LDM::BME680::readSensor(void) {
             this->setGas(values.gas_resistance);
             BME680_INFO("Humidity: %.2f, Temp: %.2fC, %.2f hPa, %.2f Ohm\n",
                 this->getHumidity(), this->getTemperature(), this->getPressure(), this->getGas());
-            return true;
+            return ESP_OK;
         } else {
             BME680_INFO("Could not read data from BME680 sensor");
-            return false;
+            return ESP_FAIL;
         }
     }
 
-    return true;
+    return ESP_OK;
 };
 
 cJSON* LDM::BME680::buildJson(void) {
