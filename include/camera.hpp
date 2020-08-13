@@ -1,14 +1,17 @@
 #ifndef __CAMERA_HPP__
 #define __CAMERA_HPP__
 
-#ifdef CONFIG_CAMERA_SENSOR_ENABLED
+// #ifdef CONFIG_CAMERA_SENSOR_ENABLED
+#include <cJSON.h>
+#include <esp_err.h>
 #include <esp_camera.h>
 
-#include <camera_pins.hpp>
+#include <sensor.hpp>
 
 namespace LDM {
 class Camera : public Sensor{
 public:
+    Camera(void);
     Camera(framesize_t frame_size=FRAMESIZE_SVGA, pixformat_t pixel_format=PIXFORMAT_JPEG);
     // BME680();
     // float getHumidity(void);
@@ -20,10 +23,15 @@ public:
     // void setPressure(float pressure);
     // void setGas(float gas);
 
+    size_t getWidth(void);
+    size_t getHeight(void);
+
     esp_err_t init(void);
     esp_err_t deinit(void);
     esp_err_t readSensor(void);
     cJSON *buildJson(void);
+
+    void releaseFrameBuffer(void);
 
 private:
     // camera config
@@ -35,6 +43,10 @@ private:
     // jpeg buffer
     size_t jpg_buf_len;
     uint8_t* jpg_buf;
+
+    // frame info
+    size_t width;
+    size_t height;
 
     // float temperature;
     // float humidity;
@@ -51,6 +63,6 @@ private:
 }
 
 
-#endif // CONFIG_CAMERA_SENSOR_ENABLED
+// #endif // CONFIG_CAMERA_SENSOR_ENABLED
 
 #endif // __CAMERA_HPP__

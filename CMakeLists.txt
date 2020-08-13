@@ -1,6 +1,6 @@
-if(CONFIG_CAMERA_SENSOR_ENABLED)
-    set(camera_dep esp32-camera)
-endif()
+#if(CONFIG_CAMERA_SENSOR_ENABLED)
+#    set(camera_dep esp32-camera)
+#endif()
 
 idf_component_register(
     SRC_DIRS src
@@ -8,5 +8,6 @@ idf_component_register(
     REQUIRES dht
              bme680
              json
+             esp32-camera
              ${camera_dep}
 )

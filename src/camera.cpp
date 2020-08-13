@@ -1,11 +1,19 @@
-#ifdef CONFIG_CAMERA_SENSOR_ENABLED
-
-#define TAG "Camera"
-
+// #ifdef CONFIG_CAMERA_SENSOR_ENABLED
 #include <camera_pins.hpp>
 #include <camera.hpp>
 
-LDM::Camera::Camera(pixformat_t resolution, pixformat_t pixel_format) {
+#include <esp_log.h>
+#include <esp_err.h>
+#include <esp_camera.h>
+#include <cJSON.h>
+
+#define TAG "Camera"
+
+LDM::Camera::Camera(void) {
+
+}
+
+LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format) {
     this->camera_config = {
         .pin_pwdn = CAM_PIN_PWDN,
         .pin_reset = CAM_PIN_RESET,
@@ -31,7 +39,7 @@ LDM::Camera::Camera(pixformat_t resolution, pixformat_t pixel_format) {
         .ledc_channel = LEDC_CHANNEL_0,
 
         .pixel_format = pixel_format, //YUV422,GRAYSCALE,RGB565,JPEG
-        .frame_size = frame_size,     //QQVGA-UXGA Do not use sizes above QVGA when not JPEG
+        .frame_size = resolution,     //QQVGA-UXGA Do not use sizes above QVGA when not JPEG
 
         .jpeg_quality = 12, //0-63 lower number means higher quality
         .fb_count = 2       //if more than one, i2s runs in continuous mode. Use only with JPEG
@@ -55,10 +63,10 @@ LDM::Camera::Camera(pixformat_t resolution, pixformat_t pixel_format) {
 
 esp_err_t LDM::Camera::init(void) {
     //power up the camera if PWDN pin is defined
-    if(CAM_PIN_PWDN != -1) {
-        pinMode(CAM_PIN_PWDN, OUTPUT);
-        digitalWrite(CAM_PIN_PWDN, LOW);
-    }
+    // if(CAM_PIN_PWDN != -1) {
+    //     pinMode(CAM_PIN_PWDN, OUTPUT);
+    //     digitalWrite(CAM_PIN_PWDN, LOW);
+    // }
 
     // initialize the camera
     esp_err_t err = esp_camera_init(&camera_config);
@@ -82,21 +90,33 @@ esp_err_t LDM::Camera::readSensor(void) {
 
     // convert frame to jpeg
     if(fb->format != PIXFORMAT_JPEG) {
+        this->width = fb->width;
+        this->height = fb->height;
         bool jpeg_converted = frame2jpg(this->fb, 80, &this->jpg_buf, &this->jpg_buf_len);
         if(!jpeg_converted) {
             ESP_LOGE(TAG, "JPEG Compression Failed");
-            esp_camera_fb_return(fb);
+            esp_camera_fb_return(this->fb);
+            this->fb = NULL;
             return ESP_FAIL;
         }
     } else {
         this->jpg_buf_len = fb->len;
         this->jpg_buf = fb->buf;
+        this->width = fb->width;
+        this->height = fb->height;
     }
 
+    // TODO check if this invalidates buffer (resort to using releaseFrameBuffer)
     //return the frame buffer back to the driver for reuse
     esp_camera_fb_return(this->fb);
 
     return ESP_OK;
+}
+
+void LDM::Camera::releaseFrameBuffer(void) {
+    if(this->fb != NULL) {
+        esp_camera_fb_return(this->fb);
+    }
 }
 
 esp_err_t LDM::Camera::deinit(void) {
@@ -117,4 +137,4 @@ cJSON* LDM::Camera::buildJson(void) {
     return NULL;
 }
 
-#endif // CONFIG_CAMERA_SENSOR_ENABLED
+// #endif // CONFIG_CAMERA_SENSOR_ENABLED

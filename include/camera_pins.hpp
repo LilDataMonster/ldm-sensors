@@ -7,7 +7,7 @@
 // // #include <esp_timer.h>
 // #endif
 
-#ifdef CONFIG_CAMERA_MODEL_HUZZAH32
+// #ifdef CONFIG_CAMERA_MODEL_HUZZAH32
 #define CAM_BOARD       "HUZZAH32"
 #define CAM_PIN_PWDN    -1 //power down is not used
 #define CAM_PIN_RESET   -1 //software reset will be performed
@@ -28,7 +28,8 @@
 #define CAM_PIN_HREF    23
 #define CAM_PIN_PCLK    22
 
-#elif CONFIG_CAMERA_MODEL_WROVER_KIT
+// #elif CONFIG_CAMERA_MODEL_WROVER_KIT
+#if CONFIG_CAMERA_MODEL_WROVER_KIT
 #define CAM_BOARD       "WROVER-KIT"
 #define CAM_PIN_PWDN    -1 //power down is not used
 #define CAM_PIN_RESET   -1 //software reset will be performed
