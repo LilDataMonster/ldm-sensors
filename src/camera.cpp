@@ -6,7 +6,7 @@
 
 #if CONFIG_CAMERA_SENSOR_ENABLED
 #include <camera_pins.hpp>
-#include <ldm-camera.hpp>
+#include <camera.hpp>
 #include <esp_camera.h>
 
 LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format, uint8_t jpeg_quality, uint8_t fb_count) {
