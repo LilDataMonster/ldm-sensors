@@ -1,5 +1,7 @@
 #if(CONFIG_CAMERA_SENSOR_ENABLED)
 #    set(camera_dep esp32-camera)
+#else()
+#    set(camera_dep "")
 #endif()
 
 idf_component_register(
@@ -9,5 +11,5 @@ idf_component_register(
              bme680
              json
              esp32-camera
-             ${camera_dep}
+             #${camera_dep}
 )

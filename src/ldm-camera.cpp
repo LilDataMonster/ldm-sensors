@@ -1,19 +1,15 @@
-// #ifdef CONFIG_CAMERA_SENSOR_ENABLED
-#include <camera_pins.hpp>
-#include <camera.hpp>
-
 #include <esp_log.h>
 #include <esp_err.h>
-#include <esp_camera.h>
 #include <cJSON.h>
 
 #define TAG "Camera"
 
-LDM::Camera::Camera(void) {
+#if CONFIG_CAMERA_SENSOR_ENABLED
+#include <camera_pins.hpp>
+#include <ldm-camera.hpp>
+#include <esp_camera.h>
 
-}
-
-LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format) {
+LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format, uint8_t jpeg_quality, uint8_t fb_count) {
     this->camera_config = {
         .pin_pwdn = CAM_PIN_PWDN,
         .pin_reset = CAM_PIN_RESET,
@@ -41,14 +37,14 @@ LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format) {
         .pixel_format = pixel_format, //YUV422,GRAYSCALE,RGB565,JPEG
         .frame_size = resolution,     //QQVGA-UXGA Do not use sizes above QVGA when not JPEG
 
-        .jpeg_quality = 12, //0-63 lower number means higher quality
-        .fb_count = 2       //if more than one, i2s runs in continuous mode. Use only with JPEG
+        .jpeg_quality = jpeg_quality, //0-63 lower number means higher quality
+        .fb_count = fb_count       //if more than one, i2s runs in continuous mode. Use only with JPEG
     };
 
 #if CONFIG_CAMERA_MODEL_ESP_EYE || CONFIG_CAMERA_MODEL_ESP32_CAM_BOARD
-    /* IO13, IO14 is designed for JTAG by default,
-     * to use it as generalized input,
-     * firstly declare it as pullup input */
+    // IO13, IO14 is designed for JTAG by default,
+    // to use it as generalized input,
+    // firstly declare it as pullup input
     gpio_config_t conf;
     conf.mode = GPIO_MODE_INPUT;
     conf.pull_up_en = GPIO_PULLUP_ENABLE;
@@ -69,7 +65,7 @@ esp_err_t LDM::Camera::init(void) {
     // }
 
     // initialize the camera
-    esp_err_t err = esp_camera_init(&camera_config);
+    esp_err_t err = esp_camera_init(&this->camera_config);
 
     if(err != ESP_OK) {
         ESP_LOGE(TAG, "Camera Initialization Failed");
@@ -137,4 +133,4 @@ cJSON* LDM::Camera::buildJson(void) {
     return NULL;
 }
 
-// #endif // CONFIG_CAMERA_SENSOR_ENABLED
+#endif // CONFIG_CAMERA_SENSOR_ENABLED
