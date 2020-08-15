@@ -27,7 +27,11 @@ public:
     esp_err_t readSensor(void);
     cJSON *buildJson(void);
 
+    // allocates a char* which must be freed by caller
+    char *encodeString(size_t output_length=0, size_t offset=0, size_t padding=0);
+
     void releaseFrameBuffer(void);
+    uint8_t * getEncodedBuffer(void);
 
 private:
     // camera config
@@ -43,6 +47,9 @@ private:
     // frame info
     size_t width;
     size_t height;
+
+    // JSON buffer
+    uint8_t *encoded_buffer;
 };
 }
 

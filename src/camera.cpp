@@ -1,10 +1,13 @@
 #include <esp_log.h>
 #include <esp_err.h>
 #include <cJSON.h>
+#include <cstring>
 
 #define TAG "Camera"
 
 #if CONFIG_CAMERA_SENSOR_ENABLED
+#include <mbedtls/base64.h>
+
 #include <camera_pins.hpp>
 #include <camera.hpp>
 #include <esp_camera.h>
@@ -64,6 +67,9 @@ esp_err_t LDM::Camera::init(void) {
     //     digitalWrite(CAM_PIN_PWDN, LOW);
     // }
 
+    this->encoded_buffer = NULL;
+    this->fb = NULL;
+
     // initialize the camera
     esp_err_t err = esp_camera_init(&this->camera_config);
 
@@ -75,7 +81,10 @@ esp_err_t LDM::Camera::init(void) {
 }
 
 esp_err_t LDM::Camera::readSensor(void) {
-    this->fb = NULL;
+    if(this->fb != NULL) {
+        this->releaseFrameBuffer();
+        this->fb = NULL;
+    }
 
     //acquire a frame
     this->fb = esp_camera_fb_get();
@@ -104,7 +113,7 @@ esp_err_t LDM::Camera::readSensor(void) {
 
     // TODO check if this invalidates buffer (resort to using releaseFrameBuffer)
     //return the frame buffer back to the driver for reuse
-    esp_camera_fb_return(this->fb);
+    // esp_camera_fb_return(this->fb);
 
     return ESP_OK;
 }
@@ -116,6 +125,14 @@ void LDM::Camera::releaseFrameBuffer(void) {
 }
 
 esp_err_t LDM::Camera::deinit(void) {
+    this->releaseFrameBuffer();
+    this->fb = NULL;
+
+    if(this->encoded_buffer != NULL) {
+        free(this->encoded_buffer);
+    }
+    this->encoded_buffer = NULL;
+
     esp_err_t err = esp_camera_deinit();
 
     if(err != ESP_OK) {
@@ -128,9 +145,95 @@ esp_err_t LDM::Camera::deinit(void) {
     return err;
 }
 
+char* LDM::Camera::encodeString(size_t output_length, size_t offset, size_t padding) {
+      // size_t output_length = 0;
+      int err;
+      if(output_length == 0) {
+          // fetch size to allocate
+          err = mbedtls_base64_encode(
+                                  NULL,
+                                  0,
+                                  &output_length,
+                                  this->jpg_buf,
+                                  this->jpg_buf_len
+                              );
+
+          ESP_LOGI(TAG, "Encoding Image of Buffer Size: %u", this->jpg_buf_len);
+          ESP_LOGI(TAG, "Image Encoding Required Buffer Size: %u", output_length);
+      }
+
+      // allocate memory
+      if(this->encoded_buffer != NULL) {
+          free(this->encoded_buffer);
+          this->encoded_buffer = NULL;
+      }
+      this->encoded_buffer = (uint8_t*)malloc(sizeof(uint8_t) * (output_length + padding));
+
+      // populate buffer and add offset if provided
+      err = mbedtls_base64_encode(
+                              this->encoded_buffer + offset,
+                              output_length,
+                              &output_length,
+                              this->jpg_buf,
+                              this->jpg_buf_len
+                          );
+
+      // std::string str_buff(reinterpret_cast<char*>(this->encoded_buffer));
+
+      // check base64 encoder
+      if(err == MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL) {
+          ESP_LOGE(TAG, "Error Encoding Buffer: Buffer Too Small : %u bytes written", output_length);
+      } else if(err) {
+          ESP_LOGE(TAG, "Error Encoding Buffer: %d : %u bytes written", err, output_length);
+      } else {
+          ESP_LOGI(TAG, "Successfully Encoded Buffer: %u bytes written, string length: %u",
+                      output_length, strlen(reinterpret_cast<char*>(this->encoded_buffer)));//str_buff.length());
+      }
+
+      // return str_buff.c_str();
+      return (char*)this->encoded_buffer;
+}
+
 cJSON* LDM::Camera::buildJson(void) {
-    // TODO
-    return NULL;
+    // const char* encode_str = encodeString();
+    // printf("Encode String: %s\n\n", encode_str);
+
+    // ESP_LOGI(TAG, "Encoding String: String Length: %u\n%s", str_buff.length(), str_buff.c_str());
+
+    // cJSON *root = cJSON_CreateObject();
+    // cJSON_AddItemToObject(root, "camera1", cJSON_CreateString(str_buff.substr(0, 10000).c_str()));
+    // cJSON_AddItemToObject(root, "camera2", cJSON_CreateString(str_buff.substr(10000+1).c_str()));
+    // cJSON_AddItemToObject(root, "camera", cJSON_CreateString(encode_str));
+    // cJSON_AddItemReferenceToObject(root, "camera", cJSON_CreateStringReference(encode_str));
+
+    // using cJSON_AddItemToObject with cJSON_Print() seems to cause a NULL response
+    // when creating a string with a large buffer, workaround seems to be to form
+    // JSON object by first generating the JSON sting and then parsing it
+    // Heap space is very limited, so free allocated memory back whenever possible!
+
+    // get encoded string
+    const char* encode_str = encodeString(); // same as this->encoded_buffer
+    size_t data_buffer_size = strlen(encode_str);
+
+    // allocate and populate buffer
+    char *post_data_buffer = (char*)malloc(sizeof(char) * (data_buffer_size+256));
+    snprintf(post_data_buffer, data_buffer_size+256, "{ \"camera\": \"%s\"}", encode_str);
+
+    // free encoded buffer from heap
+    free(this->encoded_buffer);
+    this->encoded_buffer = NULL;
+
+    // form cjson response
+    cJSON *root = cJSON_Parse(post_data_buffer);
+
+    // free post data buffer from heap
+    free(post_data_buffer);
+
+    return root;
+}
+
+uint8_t * LDM::Camera::getEncodedBuffer(void) {
+    return this->encoded_buffer;
 }
 
 #endif // CONFIG_CAMERA_SENSOR_ENABLED
