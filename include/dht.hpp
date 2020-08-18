@@ -35,6 +35,7 @@ public:
     esp_err_t init(void);
     esp_err_t deinit(void);
     esp_err_t readSensor(void);
+    const char* getSensorName(void);
     cJSON *buildJson(void);
 
 private:

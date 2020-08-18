@@ -66,3 +66,11 @@ void LDM::DHT::setHumidity(float humidity) {
 void LDM::DHT::setTemperature(float temperature) {
     this->temperature = temperature;
 };
+
+const char* LDM::DHT::getSensorName(void) {
+#ifdef DHT_TYPE_DHT11
+    return "DHT11";
+#elif DHT_TYPE_DHT22
+    return "DHT22";
+#endif
+}

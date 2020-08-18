@@ -218,6 +218,7 @@ cJSON* LDM::Camera::buildJson(void) {
     // allocate and populate buffer
     char *post_data_buffer = (char*)malloc(sizeof(char) * (data_buffer_size+256));
     snprintf(post_data_buffer, data_buffer_size+256, "{ \"camera\": \"%s\"}", encode_str);
+    // printf("%s\n", post_data_buffer);
 
     // free encoded buffer from heap
     free(this->encoded_buffer);
@@ -234,6 +235,15 @@ cJSON* LDM::Camera::buildJson(void) {
 
 uint8_t * LDM::Camera::getEncodedBuffer(void) {
     return this->encoded_buffer;
+}
+
+// char* LDM::Camera::getSensorName(void) {
+// #define STR(_x) #_x
+//     return "CAM" const_cast<char*>(STR(CAM_BOARD));
+// #undef STR
+
+const char* LDM::Camera::getSensorName(void) {
+    return "Camera";
 }
 
 #endif // CONFIG_CAMERA_SENSOR_ENABLED

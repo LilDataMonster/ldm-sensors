@@ -10,6 +10,7 @@ public:
     virtual esp_err_t init(void) = 0;
     virtual esp_err_t deinit(void) = 0;
     virtual esp_err_t readSensor(void) = 0;
+    virtual const char * getSensorName(void) = 0;
     virtual cJSON *buildJson(void) = 0;
 };
 }

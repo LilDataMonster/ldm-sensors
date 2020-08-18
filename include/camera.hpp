@@ -25,6 +25,7 @@ public:
     esp_err_t init(void);
     esp_err_t deinit(void);
     esp_err_t readSensor(void);
+    const char* getSensorName(void);
     cJSON *buildJson(void);
 
     // allocates a char* which must be freed by caller

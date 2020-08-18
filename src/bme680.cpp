@@ -119,3 +119,7 @@ void LDM::BME680::setPressure(float pressure) {
 void LDM::BME680::setGas(float gas) {
     this->gas = gas;
 };
+
+const char* LDM::BME680::getSensorName(void) {
+    return "BME680";
+}
