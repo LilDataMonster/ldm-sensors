@@ -118,6 +118,30 @@ esp_err_t LDM::Camera::readSensor(void) {
     return ESP_OK;
 }
 
+esp_err_t LDM::Camera::releaseData(void) {
+    this->releaseFrameBuffer();
+    this->fb = NULL;
+
+    if(this->encoded_buffer != NULL) {
+        free(this->encoded_buffer);
+    }
+    this->encoded_buffer = NULL;
+
+    return ESP_OK;
+}
+
+camera_fb_t * LDM::Camera::getFrameBuffer(void) {
+    return this->fb;
+}
+
+uint8_t * LDM::Camera::getJpgBuffer(void) {
+    return this->jpg_buf;
+}
+
+size_t LDM::Camera::getJpgBufferLength(void) {
+    return this->jpg_buf_len;
+}
+
 void LDM::Camera::releaseFrameBuffer(void) {
     if(this->fb != NULL) {
         esp_camera_fb_return(this->fb);

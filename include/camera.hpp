@@ -28,6 +28,11 @@ public:
     const char* getSensorName(void);
     cJSON *buildJson(void);
 
+    camera_fb_t * getFrameBuffer(void);
+    uint8_t * getJpgBuffer(void);
+    size_t getJpgBufferLength(void);
+    esp_err_t releaseData(void);
+
     // allocates a char* which must be freed by caller
     char *encodeString(size_t output_length=0, size_t offset=0, size_t padding=0);
 
