@@ -10,7 +10,7 @@
 #include <esp_camera.h>
 
 namespace LDM {
-class Camera : public Sensor{
+class Camera : public Sensor {
 public:
     Camera(
       framesize_t frame_size=FRAMESIZE_SVGA,
