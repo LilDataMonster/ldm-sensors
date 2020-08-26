@@ -39,6 +39,9 @@ public:
     void releaseFrameBuffer(void);
     uint8_t * getEncodedBuffer(void);
 
+    // get esp32-camera sensor struct
+    sensor_t * getSensor(void);
+
 private:
     // camera config
     camera_config_t camera_config;

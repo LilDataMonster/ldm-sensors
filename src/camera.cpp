@@ -270,4 +270,8 @@ const char* LDM::Camera::getSensorName(void) {
     return "Camera";
 }
 
+sensor_t * LDM::Camera::getSensor(void) {
+    return esp_camera_sensor_get();
+}
+
 #endif // CONFIG_CAMERA_SENSOR_ENABLED
