@@ -123,3 +123,7 @@ void LDM::BME680::setGas(float gas) {
 const char* LDM::BME680::getSensorName(void) {
     return "BME680";
 }
+
+esp_err_t LDM::BME680::releaseData(void) {
+    return ESP_OK;
+}

@@ -74,3 +74,7 @@ const char* LDM::DHT::getSensorName(void) {
     return "DHT22";
 #endif
 }
+
+esp_err_t LDM::DHT::releaseData(void) {
+    return ESP_OK;
+}

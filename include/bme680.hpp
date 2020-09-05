@@ -37,6 +37,7 @@ public:
     esp_err_t readSensor(void);
     const char* getSensorName(void);
     cJSON *buildJson(void);
+    esp_err_t releaseData(void);
 
 private:
     float temperature;
