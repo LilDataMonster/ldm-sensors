@@ -59,6 +59,7 @@ private:
 
     // JSON buffer
     uint8_t *encoded_buffer;
+    // cJSON * encoded_json_ref;
 };
 }
 

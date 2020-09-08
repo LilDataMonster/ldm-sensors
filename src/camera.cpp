@@ -58,6 +58,8 @@ LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format, uint8_t jp
     conf.pin_bit_mask = 1LL << 14;
     gpio_config(&conf);
 #endif
+
+    // encoded_json_ref = NULL;
 }
 
 esp_err_t LDM::Camera::init(void) {
@@ -191,11 +193,11 @@ char* LDM::Camera::encodeString(size_t output_length, size_t offset, size_t padd
           free(this->encoded_buffer);
           this->encoded_buffer = NULL;
       }
-      this->encoded_buffer = (uint8_t*)malloc(sizeof(uint8_t) * (output_length + padding));
+      this->encoded_buffer = (uint8_t*)malloc(sizeof(uint8_t)*output_length);
 
       // populate buffer and add offset if provided
       err = mbedtls_base64_encode(
-                              this->encoded_buffer + offset,
+                              this->encoded_buffer,
                               output_length,
                               &output_length,
                               this->jpg_buf,
@@ -238,6 +240,14 @@ cJSON* LDM::Camera::buildJson(void) {
     // get encoded string
     const char* encode_str = encodeString(); // same as this->encoded_buffer
     size_t data_buffer_size = strlen(encode_str);
+
+    // if(encoded_json_ref != NULL) {
+    //     cJSON_Delete(encoded_json_ref);
+    //     encoded_json_ref = NULL;
+    // }
+    // encoded_json_ref = cJSON_CreateStringReference(encode_str);
+    //
+    // return encoded_json_ref;
 
     // allocate and populate buffer
     char *post_data_buffer = (char*)malloc(sizeof(char) * (data_buffer_size+256));
