@@ -12,5 +12,6 @@ idf_component_register(
              json
              mbedtls
              esp32-camera
+             i2cdev
              ${camera_dep}
 )
