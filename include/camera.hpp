@@ -16,7 +16,8 @@ public:
       framesize_t frame_size=FRAMESIZE_SVGA,
       pixformat_t pixel_format=PIXFORMAT_JPEG,
       uint8_t jpeg_quality=12,
-      uint8_t fb_count=2
+      uint8_t fb_count=2,
+      int xclk_freq=20000000
     );
 
     size_t getWidth(void);

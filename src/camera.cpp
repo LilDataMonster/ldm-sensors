@@ -12,7 +12,12 @@
 #include <camera.hpp>
 #include <esp_camera.h>
 
-LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format, uint8_t jpeg_quality, uint8_t fb_count) {
+LDM::Camera::Camera(framesize_t resolution,
+                    pixformat_t pixel_format,
+                    uint8_t jpeg_quality,
+                    uint8_t fb_count,
+                    int xclk_freq
+                  ) {
     this->camera_config = {
         .pin_pwdn = CAM_PIN_PWDN,
         .pin_reset = CAM_PIN_RESET,
@@ -33,7 +38,8 @@ LDM::Camera::Camera(framesize_t resolution, pixformat_t pixel_format, uint8_t jp
         .pin_pclk = CAM_PIN_PCLK,
 
         //XCLK 20MHz or 10MHz for OV2640 double FPS (Experimental)
-        .xclk_freq_hz = 20000000,
+        // .xclk_freq_hz = 20000000,
+        .xclk_freq_hz = xclk_freq,
         .ledc_timer = LEDC_TIMER_0,
         .ledc_channel = LEDC_CHANNEL_0,
 
