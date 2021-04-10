@@ -44,7 +44,9 @@ esp_err_t LDM::BME680::init(void) {
 
     BME680_INFO("BME680 Initialized for I2C GPIO %d, SDA GPIO %d, SCL GPIO %d", (int)i2c_port_num, (int)sda_gpio, (int)scl_gpio);
 
-    return ESP_OK;
+    esp_err_t response = ESP_OK;
+    this->initialized = response;
+    return response;
 };
 
 esp_err_t LDM::BME680::deinit(void) {
@@ -61,13 +63,13 @@ esp_err_t LDM::BME680::readSensor(void) {
 
         // get the results and do something with them
         if(bme680_get_results_float(&sensor, &values) == ESP_OK) {
-            BME680_INFO("BME680 Sensor: %.2f °C, %.2f %%, %.2f hPa, %.2f Ohm\n",
+            BME680_INFO("BME680 Sensor: %.2f °C, %.2f %%, %.2f hPa, %.2f Ohm",
                 values.temperature, values.humidity, values.pressure, values.gas_resistance);
             this->setHumidity(values.humidity);
             this->setTemperature(values.temperature);
             this->setPressure(values.pressure);
             this->setGas(values.gas_resistance);
-            BME680_INFO("Humidity: %.2f, Temp: %.2fC, %.2f hPa, %.2f Ohm\n",
+            BME680_INFO("Humidity: %.2f, Temp: %.2fC, %.2f hPa, %.2f Ohm",
                 this->getHumidity(), this->getTemperature(), this->getPressure(), this->getGas());
             return ESP_OK;
         } else {

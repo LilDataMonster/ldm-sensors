@@ -85,6 +85,7 @@ esp_err_t LDM::Camera::init(void) {
         ESP_LOGE(TAG, "Camera Initialization Failed");
     }
 
+    this->initialized = err;
     return err;
 }
 

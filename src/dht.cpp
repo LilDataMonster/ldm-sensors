@@ -22,7 +22,9 @@ esp_err_t LDM::DHT::init(void) {
     gpio_set_pull_mode(dht_gpio, GPIO_PULLUP_ONLY);
 
     DHT_INFO("DHT Initialized for GPIO %d", (int)dht_gpio);
-    return ESP_OK;
+    esp_err_t response = ESP_OK;
+    this->initialized = response;
+    return response;
 };
 
 esp_err_t LDM::DHT::deinit(void) {
