@@ -63,14 +63,14 @@ esp_err_t LDM::BME680::readSensor(void) {
 
         // get the results and do something with them
         if(bme680_get_results_float(&sensor, &values) == ESP_OK) {
-            BME680_INFO("BME680 Sensor: %.2f °C, %.2f %%, %.2f hPa, %.2f Ohm",
-                values.temperature, values.humidity, values.pressure, values.gas_resistance);
-            this->setHumidity(values.humidity);
+            // BME680_INFO("BME680 Sensor: %.2f °C, %.2f %%, %.2f hPa, %.2f Ohm",
+            //     values.temperature, values.humidity, values.pressure, values.gas_resistance);
             this->setTemperature(values.temperature);
+            this->setHumidity(values.humidity);
             this->setPressure(values.pressure);
             this->setGas(values.gas_resistance);
-            BME680_INFO("Humidity: %.2f, Temp: %.2fC, %.2f hPa, %.2f Ohm",
-                this->getHumidity(), this->getTemperature(), this->getPressure(), this->getGas());
+            BME680_INFO("Temperature: %.2f °C, Humidity: %.2f %%, Pressure: %.2f hPa, Gas: %.2f Ohm",
+                this->getTemperature(), this->getHumidity(), this->getPressure(), this->getGas());
             return ESP_OK;
         } else {
             BME680_INFO("Could not read data from BME680 sensor");
