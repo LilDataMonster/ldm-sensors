@@ -228,15 +228,15 @@ char* LDM::Camera::encodeString(size_t output_length, size_t offset, size_t padd
 }
 
 cJSON* LDM::Camera::buildJson(void) {
-    // const char* encode_str = encodeString();
+    const char* encode_str = encodeString();
     // printf("Encode String: %s\n\n", encode_str);
 
     // ESP_LOGI(TAG, "Encoding String: String Length: %u\n%s", str_buff.length(), str_buff.c_str());
 
-    // cJSON *root = cJSON_CreateObject();
+    cJSON *root = cJSON_CreateObject();
     // cJSON_AddItemToObject(root, "camera1", cJSON_CreateString(str_buff.substr(0, 10000).c_str()));
     // cJSON_AddItemToObject(root, "camera2", cJSON_CreateString(str_buff.substr(10000+1).c_str()));
-    // cJSON_AddItemToObject(root, "camera", cJSON_CreateString(encode_str));
+    cJSON_AddItemToObject(root, "camera", cJSON_CreateString(encode_str));
     // cJSON_AddItemReferenceToObject(root, "camera", cJSON_CreateStringReference(encode_str));
 
     // using cJSON_AddItemToObject with cJSON_Print() seems to cause a NULL response
@@ -244,32 +244,32 @@ cJSON* LDM::Camera::buildJson(void) {
     // JSON object by first generating the JSON sting and then parsing it
     // Heap space is very limited, so free allocated memory back whenever possible!
 
-    // get encoded string
-    const char* encode_str = encodeString(); // same as this->encoded_buffer
-    size_t data_buffer_size = strlen(encode_str);
-
-    // if(encoded_json_ref != NULL) {
-    //     cJSON_Delete(encoded_json_ref);
-    //     encoded_json_ref = NULL;
-    // }
-    // encoded_json_ref = cJSON_CreateStringReference(encode_str);
+    // // get encoded string
+    // const char* encode_str = encodeString(); // same as this->encoded_buffer
+    // size_t data_buffer_size = strlen(encode_str);
     //
-    // return encoded_json_ref;
-
-    // allocate and populate buffer
-    char *post_data_buffer = (char*)malloc(sizeof(char) * (data_buffer_size+256));
-    snprintf(post_data_buffer, data_buffer_size+256, "{ \"camera\": \"%s\"}", encode_str);
-    // printf("%s\n", post_data_buffer);
-
+    // // if(encoded_json_ref != NULL) {
+    // //     cJSON_Delete(encoded_json_ref);
+    // //     encoded_json_ref = NULL;
+    // // }
+    // // encoded_json_ref = cJSON_CreateStringReference(encode_str);
+    // //
+    // // return encoded_json_ref;
+    //
+    // // allocate and populate buffer
+    // char *post_data_buffer = (char*)malloc(sizeof(char) * (data_buffer_size+256));
+    // snprintf(post_data_buffer, data_buffer_size+256, "{ \"camera\": \"%s\"}", encode_str);
+    // // printf("%s\n", post_data_buffer);
+    //
     // free encoded buffer from heap
     free(this->encoded_buffer);
     this->encoded_buffer = NULL;
-
-    // form cjson response
-    cJSON *root = cJSON_Parse(post_data_buffer);
-
-    // free post data buffer from heap
-    free(post_data_buffer);
+    //
+    // // form cjson response
+    // cJSON *root = cJSON_Parse(post_data_buffer);
+    //
+    // // free post data buffer from heap
+    // free(post_data_buffer);
 
     return root;
 }
